@@ -2,9 +2,9 @@
 #include <soc/rtc.h>
 #include "canvas.h"
 #include "pal_grayscale.h"
+#include "constants.h"
 
 CompositeOutput * composite;
-int graphicsXres, graphicsYres;
 Canvas * canvas;
 
 void setup()
@@ -16,10 +16,8 @@ void setup()
   esp_pm_lock_acquire(powerManagementLock);
 
   // TODO se débarasser de cette demi-résolution.
-  composite = new CompositeOutput(320, 240);
-  graphicsXres = composite->width / 2;
-  graphicsYres = composite->height / 2;
-  canvas = new Canvas(graphicsXres, graphicsYres);
+  composite = new CompositeOutput(WIDTH * 2, HEIGHT * 2);
+  canvas = new Canvas();
 
   //running composite output pinned to first core
   xTaskCreatePinnedToCore(compositeTask, "compositeCoreTask", 1024, NULL, 1, NULL, 0);
@@ -40,25 +38,24 @@ void loop()
 {
   //clearing background and starting to draw
   canvas->begin(0);
-
-  for(int i = 0; i < graphicsXres; i = i + 2) {
-    canvas->line(i, 0, i, graphicsYres, 31);
+  canvas->line(0, 0, 10, 10, 127);
+  for(int i = 0; i < WIDTH; i = i + 2) {
+    canvas->line(i, 0, i, HEIGHT - 1, 31);
   }
 
-  for(int i = 0; i < graphicsYres; i = i + 2) {
-    canvas->line(0, i, graphicsXres, i, 31);
+  for(int i = 0; i < HEIGHT; i = i + 2) {
+    canvas->line(0, i, WIDTH - 1, i, 31);
   }
 
-  for(int i = 0; i < graphicsXres; i = i + 10) {
-    canvas->line(i, 0, i, graphicsYres, 127);
+  for(int i = 0; i < WIDTH; i = i + 10) {
+    canvas->line(i, 0, i, HEIGHT - 1, 127);
   }
 
-  for(int i = 0; i < graphicsYres; i = i + 10) {
-    canvas->line(0, i, graphicsXres, i, 127);
+  for(int i = 0; i < HEIGHT; i = i + 10) {
+    canvas->line(0, i, WIDTH - 1, i, 127);
   }
-
-  canvas->line(graphicsXres - 1, 0, graphicsXres - 1, graphicsYres - 1, 127);
-  canvas->line(graphicsXres - 1, graphicsYres - 1, 0, graphicsYres - 1, 127);
+  canvas->line(WIDTH - 1, 0, WIDTH - 1, HEIGHT - 1, 127);
+  canvas->line(WIDTH - 1, HEIGHT - 1, 0, HEIGHT - 1, 127);
 
   // TODO - Wait for the VSync signal
   canvas->end();

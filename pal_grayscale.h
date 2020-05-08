@@ -86,9 +86,11 @@ class CompositeOutput
     Serial.printf("samplesActive: %d\r\n", samplesActive);
 
     int linesActive = (lines - verticalBlankingLines);
+    Serial.printf("linesActive: %d\r\n", linesActive);
 
     width = w < samplesActive ? w : samplesActive;
     height = h < linesActive ? h : linesActive;
+    Serial.printf("Composite resolution: %dx%d\r\n", width, height);
 
     // Vertical centering
     int blackLines = (linesActive - height) / 2;

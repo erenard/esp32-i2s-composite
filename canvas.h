@@ -1,4 +1,5 @@
 #pragma once
+#include "constants.h"
 
 class Canvas
 { 
@@ -7,26 +8,21 @@ class Canvas
   unsigned char * write;
   unsigned char * buffer_0;
   unsigned char * buffer_1;
-  int buffer_size;
   short active = 0;
   short inactive = 1;
 
   public:
-  int width;
-  int height;
-
-  Canvas(int w, int h) : width(w), height(h)
+  Canvas()
   {
-    buffer_size = width * height;
-    buffer_0 = new unsigned char [buffer_size];
-    buffer_1 = new unsigned char [buffer_size];
+    buffer_0 = new unsigned char [WIDTH * HEIGHT];
+    buffer_1 = new unsigned char [WIDTH * HEIGHT];
     write = buffer_0;
     read = buffer_1;
   }
 
   inline void begin(unsigned char color = 0)
   {
-    for(int p = 0; p < buffer_size; p++) {
+    for(int p = 0; p < WIDTH * HEIGHT; p++) {
        write[p] = color;
     }
   }
@@ -44,7 +40,7 @@ class Canvas
 
   inline void set_pixel(int x, int y, unsigned char color = 0)
   {
-    write[y * width + x] = color;
+    write[y * WIDTH + x] = color;
   }
 
   void line(int x1, int y1, int x2, int y2, unsigned char color)
