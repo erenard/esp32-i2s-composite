@@ -16,9 +16,9 @@ void setup()
   esp_pm_lock_acquire(powerManagementLock);
 
   // TODO se débarasser de cette demi-résolution.
-  composite = new CompositeOutput(640, 480);
-  graphicsXres = composite->targetXres / 2;
-  graphicsYres = composite->targetYres / 2;
+  composite = new CompositeOutput(320, 240);
+  graphicsXres = composite->width / 2;
+  graphicsYres = composite->height / 2;
   canvas = new Canvas(graphicsXres, graphicsYres);
 
   //running composite output pinned to first core

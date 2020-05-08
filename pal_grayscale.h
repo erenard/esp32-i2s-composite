@@ -32,8 +32,8 @@ class CompositeOutput
   char levelBlack;
   char levelWhite;
 
-  int targetXres;
-  int targetYres;
+  int width;
+  int height;
 
   int linesBlackTop;
   int linesBlackBottom;
@@ -42,7 +42,7 @@ class CompositeOutput
     
   unsigned short *line;
 
-  CompositeOutput(int xres, int yres, double Vcc = 3.3)
+  CompositeOutput(int w, int h, double Vcc = 3.3)
   {
     // Timings, see http://www.batsocks.co.uk/readme/video_timing.htm
     const float lineMicros = 64;
@@ -87,20 +87,20 @@ class CompositeOutput
 
     int linesActive = (lines - verticalBlankingLines);
 
-    targetXres = xres < samplesActive ? xres : samplesActive;
-    targetYres = yres < linesActive ? yres : linesActive;
+    width = w < samplesActive ? w : samplesActive;
+    height = h < linesActive ? h : linesActive;
 
     // Vertical centering
-    int blackLines = (linesActive - yres) / 2;
+    int blackLines = (linesActive - height) / 2;
     linesBlackTop = blackLines / 2; // TODO: +1 is compensation
     Serial.printf("linesBlackTop: %d\r\n", linesBlackTop);
     linesBlackBottom = blackLines - linesBlackTop;
     Serial.printf("linesBlackBottom: %d\r\n", linesBlackBottom);
 
     // horizontal centering
-    samplesBlackLeft = (samplesActive - targetXres) / 2; // TODO: +7 is compensation
+    samplesBlackLeft = (samplesActive - width) / 2; // TODO: +7 is compensation
     Serial.printf("columnsBlackLeft: %d\r\n", samplesBlackLeft);
-    samplesBlackRight = samplesActive - targetXres - samplesBlackLeft;
+    samplesBlackRight = samplesActive - width - samplesBlackLeft;
     Serial.printf("columnsBlackRight: %d\r\n", samplesBlackRight);
 
     Serial.printf("frameStart: %d\r\n", samplesHSync + samplesBackPorch + samplesBlackLeft);
@@ -115,8 +115,8 @@ class CompositeOutput
     levelWhite = (whiteVolts - syncVolts) * dacPerVolt + 0.5;
     Serial.printf("levelWhite %d\r\n", levelWhite);
 
-    pixelAspect = (float(samplesActive) / targetYres) / imageAspect;
-    Serial.printf("Composite res:(%dx%d)\r\n", targetXres, targetYres);
+    pixelAspect = (float(samplesActive) / height) / imageAspect;
+    Serial.printf("Composite res:(%dx%d)\r\n", width, height);
 
     line = (unsigned short*)malloc(sizeof(unsigned short) * samplesLine);
     composite = new I2SComposite(samplesLine);
@@ -144,7 +144,7 @@ class CompositeOutput
     // Black left (image centering)
     fillValues(i, levelBlack, samplesBlackLeft);
     // Picture Data
-    for(int x = 0; x < targetXres / 2; x++)
+    for(int x = 0; x < width / 2; x++)
     {
       unsigned short pix = (levelBlack + pixels[fromPixel + x]) << 8;
       line[i++^1] = pix;
@@ -239,9 +239,9 @@ class CompositeOutput
       sendLine();
 
     // Lines (image)
-    for(int y = 0; y < targetYres / 2; y++)
+    for(int y = 0; y < height / 2; y++)
     {
-      fillLine(pixels, y * targetXres / 2);
+      fillLine(pixels, y * width / 2);
       sendLine();
     }
 
@@ -292,9 +292,9 @@ class CompositeOutput
     for(int y = 0; y < linesBlackTop; y++)
       sendLine();
     // Lines (image)
-    for(int y = 0; y < targetYres / 2; y++)
+    for(int y = 0; y < height / 2; y++)
     {
-      fillLine(pixels, y * targetXres / 2);
+      fillLine(pixels, y * width / 2);
       sendLine();
     }
     
