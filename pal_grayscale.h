@@ -126,7 +126,7 @@ class CompositeOutput
 
   void sendLine()
   {
-    composite->sendLine(line);
+    composite->write_line(line);
   }
 
   inline void fillValues(int &i, unsigned char value, int count)
