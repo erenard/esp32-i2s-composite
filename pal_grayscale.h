@@ -207,7 +207,7 @@ class CompositeOutput
     fillValues(i, levelBlack, samplesLine / 2 - (samplesHSync + samplesBackPorch));  
   }
 
-  void sendFrameHalfResolution(unsigned char * pixels) {
+  void sendFrameHalfResolution(unsigned char ** pixels) {
     //Even field
     // 4 long
     int i = 0;
@@ -243,7 +243,7 @@ class CompositeOutput
     // Lines (image)
     for(int y = 0; y < height / 2; y++)
     {
-      fillLine(pixels, y * width / 2);
+      fillLine((* pixels), y * width / 2);
       sendLine();
     }
 
@@ -296,7 +296,7 @@ class CompositeOutput
     // Lines (image)
     for(int y = 0; y < height / 2; y++)
     {
-      fillLine(pixels, y * width / 2);
+      fillLine((* pixels), y * width / 2);
       sendLine();
     }
     

@@ -4,43 +4,37 @@
 class Canvas
 { 
   private:
-  unsigned char * read;
-  unsigned char * write;
-  unsigned char * buffer_0;
-  unsigned char * buffer_1;
-  short active = 0;
-  short inactive = 1;
+  unsigned char * buffer_w;
+  unsigned char * buffer_r;
 
   public:
   Canvas()
   {
-    buffer_0 = new unsigned char [WIDTH * HEIGHT];
-    buffer_1 = new unsigned char [WIDTH * HEIGHT];
-    write = buffer_0;
-    read = buffer_1;
+    buffer_w = new unsigned char [WIDTH * HEIGHT];
+    buffer_r = new unsigned char [WIDTH * HEIGHT];
   }
 
   inline void begin(unsigned char color = 0)
   {
     for(int p = 0; p < WIDTH * HEIGHT; p++) {
-       write[p] = color;
+       buffer_w[p] = color;
     }
   }
 
   inline void end()
   {
-    unsigned char * temp = read;
-    read = write;
-    write = temp;
+    unsigned char * temp = buffer_r;
+    buffer_r = buffer_w;
+    buffer_w = temp;
   }
 
-  inline unsigned char* get_frame() {
-    return read;
+  inline unsigned char** get_frame() {
+    return &buffer_r;
   }
 
   inline void set_pixel(int x, int y, unsigned char color = 0)
   {
-    write[y * WIDTH + x] = color;
+    buffer_w[y * WIDTH + x] = color;
   }
 
   void line(int x1, int y1, int x2, int y2, unsigned char color)
