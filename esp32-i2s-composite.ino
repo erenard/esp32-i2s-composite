@@ -1,5 +1,6 @@
 #include "esp_pm.h"
 #include <soc/rtc.h>
+//#include <driver/i2s.h>
 #include "canvas.h"
 #include "pal_grayscale.h"
 #include "constants.h"

@@ -1,5 +1,5 @@
 #pragma once
-#include "i2s-composite.h"
+#include "i2s_composite.hpp"
 
 // 1Vp-p = 140*IRE
 const float IRE = 1.0 / 140.0;
@@ -12,9 +12,6 @@ const float imageAspect = 4./3.;
 
 class CompositeOutput
 {
-  private:
-  I2SComposite *composite;
-
   public:
   int samplesLine;
   int samplesHSync;
@@ -121,12 +118,12 @@ class CompositeOutput
     Serial.printf("Composite res:(%dx%d)\r\n", width, height);
 
     line = (unsigned short*)malloc(sizeof(unsigned short) * samplesLine);
-    composite = new I2SComposite(samplesLine);
+    i2s_composite.init(samplesLine);
   }
 
   void sendLine()
   {
-    composite->write_line(line);
+    i2s_composite.write_line(line);
   }
 
   inline void fillValues(int &i, unsigned char value, int count)
